@@ -117,7 +117,7 @@
                 extraDays = previousMonthDays + extraDays;
             }
 
-            // Calculate years from months
+            // Correctly calculate years, months, and days
             let years = Math.floor(months / 12);
             let remainingMonths = months % 12;
 
@@ -151,7 +151,7 @@
             // Step 3: Calculate Prorated Rent
             let proratedRent = dailyRent * daysProrate;
 
-            // Step 4: Calculate Total Lease Term Rent
+            // Step 4: Calculate Total Lease Term Rent (Handles leases less than 12 months)
             let termRent = (totalLeaseMonths * monthlyRent) + (totalLeaseDays * dailyRent);
 
             // Display the breakdown
