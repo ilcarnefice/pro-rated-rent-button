@@ -14,7 +14,7 @@
         input {
             margin: 5px;
             padding: 5px;
-            width: 150px;
+            width: 180px;
         }
         button {
             margin-top: 10px;
@@ -32,14 +32,41 @@
     <label>Monthly Rent:</label>
     <input type="number" id="monthlyRent" placeholder="Enter Rent">
 
-    <label>Days to Prorate:</label>
-    <input type="number" id="daysProrate" placeholder="Enter Days">
+    <label>Lease Start Date:</label>
+    <input type="date" id="leaseStartDate">
 
-    <button onclick="calculateRent()">Calculate</button>
+    <label>Lease End Date:</label>
+    <input type="date" id="leaseEndDate">
+
+    <button onclick="calculateDays()">Calculate Days</button>
+
+    <h3 id="daysResult"></h3>
+
+    <label>Days to Prorate:</label>
+    <input type="number" id="daysProrate" readonly>
+
+    <button onclick="calculateRent()">Calculate Prorated Rent</button>
 
     <h3 id="result"></h3>
 
     <script>
+        function calculateDays() {
+            let startDate = new Date(document.getElementById("leaseStartDate").value);
+            let endDate = new Date(document.getElementById("leaseEndDate").value);
+
+            if (isNaN(startDate) || isNaN(endDate) || startDate >= endDate) {
+                document.getElementById("daysResult").innerText = "Please enter valid lease dates.";
+                return;
+            }
+
+            // Calculate the difference in days (including the last day)
+            let timeDifference = endDate - startDate;
+            let totalDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)) + 1;
+
+            document.getElementById("daysProrate").value = totalDays;
+            document.getElementById("daysResult").innerText = "Total Lease Days: " + totalDays;
+        }
+
         function calculateRent() {
             let monthlyRent = parseFloat(document.getElementById("monthlyRent").value);
             let daysProrate = parseInt(document.getElementById("daysProrate").value);
@@ -49,7 +76,7 @@
                 return;
             }
 
-            // Corrected formula: (Monthly Rent * 12) / 365 * Days Prorate
+            // Correct formula: (Monthly Rent * 12) / 365 * Days Prorate
             let proratedRent = ((monthlyRent * 12) / 365) * daysProrate;
 
             document.getElementById("result").innerText = "Prorated Rent: $" + proratedRent.toFixed(2);
@@ -57,3 +84,4 @@
     </script>
 </body>
 </html>
+
