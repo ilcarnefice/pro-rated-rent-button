@@ -41,6 +41,7 @@
 
     <h3 id="daysResult"></h3>
     <h3 id="monthsResult"></h3>
+    <h3 id="leapYearResult"></h3>
 
     <hr>
 
@@ -58,6 +59,20 @@
     <h3 id="result"></h3>
 
     <script>
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        function countLeapYears(startYear, endYear) {
+            let leapCount = 0;
+            for (let year = startYear; year <= endYear; year++) {
+                if (isLeapYear(year)) {
+                    leapCount++;
+                }
+            }
+            return leapCount;
+        }
+
         function calculateDays() {
             let startDate = new Date(document.getElementById("leaseStartDate").value);
             let endDate = new Date(document.getElementById("leaseEndDate").value);
@@ -65,41 +80,39 @@
             if (isNaN(startDate) || isNaN(endDate) || startDate >= endDate) {
                 document.getElementById("daysResult").innerText = "Please enter valid lease dates.";
                 document.getElementById("monthsResult").innerText = "";
+                document.getElementById("leapYearResult").innerText = "";
                 return;
             }
 
-            // Calculate the total number of days including leap years
+            // Calculate total number of days, including the last day
             let timeDifference = endDate - startDate;
             let totalDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)) + 1;
 
+            // Count leap years between the range
+            let leapYears = countLeapYears(startDate.getFullYear(), endDate.getFullYear());
+
             // Calculate exact months and remaining days
-            let startYear = startDate.getFullYear();
-            let startMonth = startDate.getMonth();
-            let startDay = startDate.getDate();
-
-            let endYear = endDate.getFullYear();
-            let endMonth = endDate.getMonth();
-            let endDay = endDate.getDate();
-
             let months = 0, extraDays = 0;
+            let tempDate = new Date(startDate);
 
-            while (startYear < endYear || (startYear === endYear && startMonth < endMonth)) {
-                let daysInCurrentMonth = new Date(startYear, startMonth + 1, 0).getDate();
-                startDate.setDate(startDate.getDate() + daysInCurrentMonth);
+            while (tempDate.getFullYear() < endDate.getFullYear() || 
+                   (tempDate.getFullYear() === endDate.getFullYear() && tempDate.getMonth() < endDate.getMonth())) {
+                let daysInCurrentMonth = new Date(tempDate.getFullYear(), tempDate.getMonth() + 1, 0).getDate();
+                tempDate.setMonth(tempDate.getMonth() + 1);
                 months++;
-                if (startDate > endDate) break;
-                startMonth++;
-                if (startMonth > 11) {
-                    startMonth = 0;
-                    startYear++;
-                }
             }
 
-            // Remaining extra days after full months
-            extraDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+            // Calculate remaining days, including the last day
+            extraDays = endDate.getDate() - tempDate.getDate() + 1;
+            if (extraDays < 0) {
+                months--;
+                let previousMonthDays = new Date(tempDate.getFullYear(), tempDate.getMonth(), 0).getDate();
+                extraDays = previousMonthDays + extraDays;
+            }
 
             document.getElementById("daysResult").innerText = `Total Lease Duration: ${totalDays} days`;
             document.getElementById("monthsResult").innerText = `Equivalent to: ${months} months and ${extraDays} days`;
+            document.getElementById("leapYearResult").innerText = `Leap Years in Range: ${leapYears}`;
         }
 
         function calculateRent() {
@@ -120,3 +133,4 @@
 
 </body>
 </html>
+
