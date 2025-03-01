@@ -155,14 +155,16 @@
             let termRent = (totalLeaseMonths * monthlyRent) + (totalLeaseDays * dailyRent);
 
             // Display the breakdown
+            document.getElementById("termRentResult").innerText = `Total Lease Term Rent: $${termRent.toFixed(2)}`;
             document.getElementById("result").innerText = `Prorated Rent: $${proratedRent.toFixed(2)}`;
+            
             document.getElementById("breakdown").innerHTML = `
                 <b>Breakdown:</b><br>
                 Annual Rent: $${annualRent.toFixed(2)} ( ${monthlyRent} × 12 )<br>
                 Daily Rent: $${dailyRent.toFixed(2)} ( ${annualRent.toFixed(2)} ÷ 365 )<br>
                 Prorated Rent: $${proratedRent.toFixed(2)} ( ${dailyRent.toFixed(2)} × ${daysProrate} days )
             `;
-            document.getElementById("termRentResult").innerText = `Total Lease Term Rent: $${termRent.toFixed(2)}`;
+
         }
     </script>
 
