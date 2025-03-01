@@ -59,8 +59,12 @@
 
     <h3 id="result"></h3>
     <h3 id="breakdown"></h3>
+    <h3 id="termRentResult"></h3>
 
     <script>
+        let totalLeaseMonths = 0;
+        let totalLeaseDays = 0;
+
         function isLeapYear(year) {
             return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
         }
@@ -117,6 +121,10 @@
             let years = Math.floor(months / 12);
             let remainingMonths = months % 12;
 
+            // Store total lease duration for term rent calculation
+            totalLeaseMonths = months;
+            totalLeaseDays = extraDays;
+
             document.getElementById("daysResult").innerText = `Total Lease Duration: ${totalDays} days`;
             document.getElementById("monthsResult").innerText = `Equivalent to: ${months} months and ${extraDays} days`;
             document.getElementById("yearsResult").innerText = `Also equivalent to: ${years} years, ${remainingMonths} months, and ${extraDays} days`;
@@ -130,6 +138,7 @@
             if (isNaN(monthlyRent) || isNaN(daysProrate) || monthlyRent <= 0 || daysProrate <= 0) {
                 document.getElementById("result").innerText = "Please enter valid values.";
                 document.getElementById("breakdown").innerText = "";
+                document.getElementById("termRentResult").innerText = "";
                 return;
             }
 
@@ -142,6 +151,9 @@
             // Step 3: Calculate Prorated Rent
             let proratedRent = dailyRent * daysProrate;
 
+            // Step 4: Calculate Total Lease Term Rent
+            let termRent = (totalLeaseMonths * monthlyRent) + (totalLeaseDays * dailyRent);
+
             // Display the breakdown
             document.getElementById("result").innerText = `Prorated Rent: $${proratedRent.toFixed(2)}`;
             document.getElementById("breakdown").innerHTML = `
@@ -150,10 +162,10 @@
                 Daily Rent: $${dailyRent.toFixed(2)} ( ${annualRent.toFixed(2)} ÷ 365 )<br>
                 Prorated Rent: $${proratedRent.toFixed(2)} ( ${dailyRent.toFixed(2)} × ${daysProrate} days )
             `;
+            document.getElementById("termRentResult").innerText = `Total Lease Term Rent: $${termRent.toFixed(2)}`;
         }
     </script>
 
 </body>
 </html>
-
 
