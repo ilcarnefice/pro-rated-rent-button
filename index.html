@@ -41,6 +41,7 @@
 
     <h3 id="daysResult"></h3>
     <h3 id="monthsResult"></h3>
+    <h3 id="yearsResult"></h3>
     <h3 id="leapYearResult"></h3>
 
     <hr>
@@ -81,6 +82,7 @@
             if (isNaN(startDate) || isNaN(endDate) || startDate >= endDate) {
                 document.getElementById("daysResult").innerText = "Please enter valid lease dates.";
                 document.getElementById("monthsResult").innerText = "";
+                document.getElementById("yearsResult").innerText = "";
                 document.getElementById("leapYearResult").innerText = "";
                 return;
             }
@@ -111,8 +113,13 @@
                 extraDays = previousMonthDays + extraDays;
             }
 
+            // Calculate years from months
+            let years = Math.floor(months / 12);
+            let remainingMonths = months % 12;
+
             document.getElementById("daysResult").innerText = `Total Lease Duration: ${totalDays} days`;
             document.getElementById("monthsResult").innerText = `Equivalent to: ${months} months and ${extraDays} days`;
+            document.getElementById("yearsResult").innerText = `Also equivalent to: ${years} years, ${remainingMonths} months, and ${extraDays} days`;
             document.getElementById("leapYearResult").innerText = `Leap Years in Range: ${leapYears}`;
         }
 
