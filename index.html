@@ -57,6 +57,7 @@
     <button onclick="calculateRent()">Calculate Prorated Rent</button>
 
     <h3 id="result"></h3>
+    <h3 id="breakdown"></h3>
 
     <script>
         function isLeapYear(year) {
@@ -121,16 +122,31 @@
 
             if (isNaN(monthlyRent) || isNaN(daysProrate) || monthlyRent <= 0 || daysProrate <= 0) {
                 document.getElementById("result").innerText = "Please enter valid values.";
+                document.getElementById("breakdown").innerText = "";
                 return;
             }
 
-            // Correct formula: (Monthly Rent * 12) / 365 * Days Prorate
-            let proratedRent = ((monthlyRent * 12) / 365) * daysProrate;
+            // Step 1: Calculate Annual Rent
+            let annualRent = monthlyRent * 12;
 
-            document.getElementById("result").innerText = "Prorated Rent: $" + proratedRent.toFixed(2);
+            // Step 2: Calculate Daily Rent
+            let dailyRent = annualRent / 365;
+
+            // Step 3: Calculate Prorated Rent
+            let proratedRent = dailyRent * daysProrate;
+
+            // Display the breakdown
+            document.getElementById("result").innerText = `Prorated Rent: $${proratedRent.toFixed(2)}`;
+            document.getElementById("breakdown").innerHTML = `
+                <b>Breakdown:</b><br>
+                Annual Rent: $${annualRent.toFixed(2)} ( ${monthlyRent} × 12 )<br>
+                Daily Rent: $${dailyRent.toFixed(2)} ( ${annualRent.toFixed(2)} ÷ 365 )<br>
+                Prorated Rent: $${proratedRent.toFixed(2)} ( ${dailyRent.toFixed(2)} × ${daysProrate} days )
+            `;
         }
     </script>
 
 </body>
 </html>
+
 
