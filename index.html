@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prorated Rent Calculator</title>
+    <title>Lease Duration & Prorated Rent Calculator</title>
     <script src="https://static.zohocdn.com/crm/javascript-sdk/2.1/ZohoEmbededAppSDK.min.js"></script>
     <style>
         body {
@@ -27,10 +27,9 @@
     </style>
 </head>
 <body>
-    <h2>Prorated Rent Calculator</h2>
 
-    <label>Monthly Rent:</label>
-    <input type="number" id="monthlyRent" placeholder="Enter Rent">
+    <!-- Lease Duration Calculator -->
+    <h2>Lease Duration Calculator</h2>
 
     <label>Lease Start Date:</label>
     <input type="date" id="leaseStartDate">
@@ -38,12 +37,21 @@
     <label>Lease End Date:</label>
     <input type="date" id="leaseEndDate">
 
-    <button onclick="calculateDays()">Calculate Days</button>
+    <button onclick="calculateDays()">Calculate Duration</button>
 
     <h3 id="daysResult"></h3>
+    <h3 id="monthsResult"></h3>
+
+    <hr>
+
+    <!-- Prorated Rent Calculator -->
+    <h2>Prorated Rent Calculator</h2>
+
+    <label>Monthly Rent:</label>
+    <input type="number" id="monthlyRent" placeholder="Enter Rent">
 
     <label>Days to Prorate:</label>
-    <input type="number" id="daysProrate" readonly>
+    <input type="number" id="daysProrate" placeholder="Enter Days">
 
     <button onclick="calculateRent()">Calculate Prorated Rent</button>
 
@@ -56,15 +64,42 @@
 
             if (isNaN(startDate) || isNaN(endDate) || startDate >= endDate) {
                 document.getElementById("daysResult").innerText = "Please enter valid lease dates.";
+                document.getElementById("monthsResult").innerText = "";
                 return;
             }
 
-            // Calculate the difference in days (including the last day)
+            // Calculate the total number of days including leap years
             let timeDifference = endDate - startDate;
             let totalDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)) + 1;
 
-            document.getElementById("daysProrate").value = totalDays;
-            document.getElementById("daysResult").innerText = "Total Lease Days: " + totalDays;
+            // Calculate exact months and remaining days
+            let startYear = startDate.getFullYear();
+            let startMonth = startDate.getMonth();
+            let startDay = startDate.getDate();
+
+            let endYear = endDate.getFullYear();
+            let endMonth = endDate.getMonth();
+            let endDay = endDate.getDate();
+
+            let months = 0, extraDays = 0;
+
+            while (startYear < endYear || (startYear === endYear && startMonth < endMonth)) {
+                let daysInCurrentMonth = new Date(startYear, startMonth + 1, 0).getDate();
+                startDate.setDate(startDate.getDate() + daysInCurrentMonth);
+                months++;
+                if (startDate > endDate) break;
+                startMonth++;
+                if (startMonth > 11) {
+                    startMonth = 0;
+                    startYear++;
+                }
+            }
+
+            // Remaining extra days after full months
+            extraDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+
+            document.getElementById("daysResult").innerText = `Total Lease Duration: ${totalDays} days`;
+            document.getElementById("monthsResult").innerText = `Equivalent to: ${months} months and ${extraDays} days`;
         }
 
         function calculateRent() {
@@ -82,6 +117,6 @@
             document.getElementById("result").innerText = "Prorated Rent: $" + proratedRent.toFixed(2);
         }
     </script>
+
 </body>
 </html>
-
